@@ -1,0 +1,4 @@
+"/Users/macCesar/Developer/Apps/text-scroller/build/android/app/src/main/java/com/codigomovil/textscroller/AssetCryptImpl.java"
+"/Users/macCesar/Developer/Apps/text-scroller/build/android/app/src/main/java/com/codigomovil/textscroller/TextScrollerActivity.java"
+"/Users/macCesar/Developer/Apps/text-scroller/build/android/app/src/main/java/com/codigomovil/textscroller/TextScrollerAppInfo.java"
+"/Users/macCesar/Developer/Apps/text-scroller/build/android/app/src/main/java/com/codigomovil/textscroller/TextScrollerApplication.java"

@@ -1,0 +1,10 @@
+com/codigomovil/textscroller/TextScrollerApplication.java
+ com.codigomovil.textscroller.TextScrollerApplication
+com/codigomovil/textscroller/AssetCryptImpl.java
+ com.codigomovil.textscroller.AssetCryptImpl
+com/codigomovil/textscroller/TextScrollerAppInfo.java
+ com.codigomovil.textscroller.TextScrollerAppInfo
+com/codigomovil/textscroller/TextScrollerActivity.java
+ com.codigomovil.textscroller.TextScrollerActivity
+com/codigomovil/textscroller/BuildConfig.java
+ com.codigomovil.textscroller.BuildConfig
