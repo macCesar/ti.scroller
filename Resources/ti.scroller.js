@@ -38,7 +38,7 @@ function main() {
 		height: Ti.UI.SIZE,
 	});
 
-	let theLabel = Ti.UI.createLabel({
+	let sideLabel = Ti.UI.createLabel({
 		left: 0,
 		width: Ti.UI.SIZE,
 		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
@@ -61,10 +61,10 @@ function main() {
 		}
 
 		if (_args.label) {
-			theLabel.applyProperties({
+			sideLabel.applyProperties({
 				left: 0,
 				width: Ti.UI.SIZE,
-				text: ` ${_args.label} `,
+				text: `  ${_args.label}  `,
 				height: _args.height ?? 28,
 				color: _args.color ?? '#fff',
 				verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
@@ -73,7 +73,7 @@ function main() {
 				viewShadowOffset: { x: 3, y: 0 }, viewShadowRadius: 3, viewShadowColor: '#80000000'
 			});
 
-			scrollerView.add(theLabel);
+			scrollerView.add(sideLabel);
 		}
 
 		scrollerView.applyProperties({
@@ -104,7 +104,7 @@ function main() {
 			backgroundColor: _backgroundColor ?? '#53606b'
 		});
 
-		theLabel.animate({
+		sideLabel.animate({
 			duration: 250,
 			backgroundColor: ColorLuminance(_backgroundColor ?? '#53606b', -0.15)
 		});
