@@ -1,12 +1,14 @@
 function main() {
 	const scroller = this;
 
-	const platformWidth = Ti.Platform.displayCaps.platformWidth;
+	let platformWidth = Ti.Platform.displayCaps.platformWidth;
 	const logicalDensityFactor = Ti.Platform.displayCaps.logicalDensityFactor;
-	const deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
+	let deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
 
+	let random;
 	let messages;
 	let duration;
+	let _delay = 0;
 	let _stop = false;
 	let currentMessage = -1;
 
@@ -15,8 +17,15 @@ function main() {
 	});
 	animation.addEventListener('complete', function() {
 		if (!_stop) {
-			scroller.animate();
+			setTimeout(() => {
+				scroller.animate();
+			}, _delay);
 		}
+	});
+
+	Ti.Gesture.addEventListener('orientationchange', (e) => {
+		platformWidth = Ti.Platform.displayCaps.platformWidth;
+		deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
 	});
 
 	let scrollerView = Ti.UI.createView({
@@ -25,10 +34,14 @@ function main() {
 	});
 
 	let scrollerLabel = Ti.UI.createLabel({
-		top: 4,
-		bottom: 4,
 		right: deviceWidth,
 		height: Ti.UI.SIZE,
+	});
+
+	let theLabel = Ti.UI.createLabel({
+		left: 0,
+		width: Ti.UI.SIZE,
+		verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
 	});
 
 	scrollerView.add(scrollerLabel);
@@ -38,16 +51,40 @@ function main() {
 	}
 
 	scroller.init = function(_args) {
-		duration = _args.duration ?? 30;
+		random = _args.random ?? false;
+		_delay = _args.delay ? _args.delay * 1000 : 0;
+		duration = _args.duration ? _args.duration * 10 : 30;
 		messages = Array.isArray(_args.messages) ? _args.messages : [_args.messages];
+
+		if (random) {
+			messages = messages.sort(() => Math.random() - 0.5);
+		}
+
+		if (_args.label) {
+			theLabel.applyProperties({
+				left: 0,
+				width: Ti.UI.SIZE,
+				text: ` ${_args.label} `,
+				height: _args.height ?? 28,
+				color: _args.color ?? '#fff',
+				verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
+				font: { fontSize: _args.fontSize ?? 14, fontWeight: 'bold' },
+				backgroundColor: ColorLuminance(_args.backgroundColor, -0.15),
+				viewShadowOffset: { x: 3, y: 0 }, viewShadowRadius: 3, viewShadowColor: '#80000000'
+			});
+
+			scrollerView.add(theLabel);
+		}
 
 		scrollerView.applyProperties({
 			top: _args.top ?? undefined,
-			backgroundColor: _args.backgroundColor ?? '#80000000'
+			height: _args.height ?? 28,
+			backgroundColor: _args.backgroundColor ?? '#53606b'
 		});
 
 		scrollerLabel.applyProperties({
 			color: _args.color ?? '#fff',
+			height: _args.height ?? 28,
 			font: { fontSize: _args.fontSize ?? 14, fontWeight: _args.fontWeight ?? 'normal' }
 		});
 	};
@@ -55,11 +92,21 @@ function main() {
 	scroller.updateMessage = function(_messages) {
 		currentMessage = -1;
 		messages = Array.isArray(_messages) ? _messages : [_messages];
+
+		if (random) {
+			messages = messages.sort(() => Math.random() - 0.5);
+		}
 	};
 
 	scroller.updateBackground = function(_backgroundColor) {
-		scrollerView.applyProperties({
-			backgroundColor: _backgroundColor ?? '#80000000'
+		scrollerView.animate({
+			duration: 250,
+			backgroundColor: _backgroundColor ?? '#53606b'
+		});
+
+		theLabel.animate({
+			duration: 250,
+			backgroundColor: ColorLuminance(_backgroundColor ?? '#53606b', -0.15)
 		});
 	};
 
@@ -68,8 +115,6 @@ function main() {
 
 		// Just to recalculate the width of the new text
 		let _label = Ti.UI.createLabel({
-			top: 4,
-			bottom: 4,
 			height: Ti.UI.SIZE,
 			text: messages[currentMessage],
 			font: { fontSize: scrollerLabel.font.fontSize ?? 14, fontWeight: scrollerLabel.font.fontWeight ?? 'normal' }
@@ -103,3 +148,27 @@ function main() {
 	};
 }
 module.exports = main;
+
+// !	http://www.sitepoint.com/javascript-generate-lighter-darker-color/
+/*
+|-------------------------------------------------------------------------------
+|	ColorLuminance(hex, lum)
+|-------------------------------------------------------------------------------
+*/
+function ColorLuminance(hex, lum) {
+	// validate hex string
+	hex = String(hex).replace(/[^0-9a-f]/gi, '');
+	if (hex.length < 6) {
+		hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+	}
+	lum = lum || 0;
+	// convert to decimal and change luminosity
+	let rgb = '#',
+		c, i;
+	for (i = 0; i < 3; i++) {
+		c = parseInt(hex.substr(i * 2, 2), 16);
+		c = Math.round(Math.min(Math.max(0, c + c * lum), 255)).toString(16);
+		rgb += ('00' + c).substr(c.length);
+	}
+	return rgb;
+}

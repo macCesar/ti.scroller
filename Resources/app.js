@@ -16,7 +16,11 @@ let singleTextMessage = new scroller();
 
 famousPeopleQuotes.init({
     top: 5,
+    delay: 2,
+    random: true,
+    duration: 2,
     color: '#fff',
+    label: 'Famous People',
     backgroundColor: '#53606b',
     messages: [
         "The greatest glory in living lies not in never falling, but in rising every time we fall. - Nelson Mandela",
@@ -31,9 +35,10 @@ famousPeopleQuotes.init({
 
 bestQuotesOfAllTimes.init({
     top: 5,
-    duration: 20,
+    duration: 2,
     color: '#fff',
     fontWeight: 'bold',
+    label: 'Best Quotes',
     backgroundColor: '#79a342',
     messages: [
         "Whoever is happy will make others happy too. - Anne Frank",
@@ -51,8 +56,10 @@ bestQuotesOfAllTimes.init({
 
 marketStocks.init({
     top: 5,
-    duration: 10,
+    height: 36,
+    duration: 1,
     color: '#fff',
+    label: 'Market',
     backgroundColor: '#F3650C',
     messages: [
         "EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%"
@@ -88,17 +95,10 @@ win.add(container);
 famousPeopleQuotes.animate();
 bestQuotesOfAllTimes.animate();
 marketStocks.animate();
+singleTextMessage.animate();
 
 setTimeout(() => {
-    singleTextMessage.animate();
+    marketStocks.updateBackground('#c91326');
 }, 5000);
-
-setTimeout(() => {
-    marketStocks.updateMessage('This text was updated after 20 seconds, it appeared after the next cycle...');
-}, 20000);
-
-setTimeout(() => {
-    bestQuotesOfAllTimes.updateBackground('red');
-}, 10000);
 
 win.open();
