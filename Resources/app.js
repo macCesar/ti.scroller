@@ -16,7 +16,6 @@ let singleTextMessage = new scroller();
 
 famousPeopleQuotes.init({
     top: 5,
-    delay: 2,
     random: true,
     duration: 2,
     color: '#fff',
@@ -67,6 +66,7 @@ marketStocks.init({
 });
 
 singleTextMessage.init({
+    delay: 3,
     backgroundColor: '#c91326',
     messages: 'Appcelerator Titanium: Everything you need to create great, native mobile apps — All from a single JavaScript code base.'
 });
