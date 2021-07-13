@@ -24,8 +24,14 @@ function main() {
 	});
 
 	Ti.Gesture.addEventListener('orientationchange', (e) => {
-		platformWidth = Ti.Platform.displayCaps.platformWidth;
-		deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
+		if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT || e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
+			if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT) {
+				platformWidth = Ti.Platform.displayCaps.platformWidth;
+			} else if (e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
+				platformWidth = (OS_IOS) ? Ti.Platform.displayCaps.platformWidth : Ti.Platform.displayCaps.platformHeight;
+			}
+			deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
+		}
 	});
 
 	let scrollerView = Ti.UI.createView({
