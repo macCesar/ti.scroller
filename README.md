@@ -5,7 +5,7 @@ A simple library to create a marquee-like elements in your Appcelerator Titanium
 
 - You can create multiple scrollers and customize them separately
 - Each scroller can display one or multiple messages, cicle between them or display them in random order
-- You can update its content at any time ( messages, color, position, speed, etc. )
+- You can update its content at any time ( messages, color, position, delay, etc. )
 - Works with Android & iOS
 
 ## Customization
