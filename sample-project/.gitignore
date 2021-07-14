@@ -1,0 +1,12 @@
+.DS_Store
+/platform
+/i18n
+/node_modules
+build.log
+build
+npm-debug.log
+tmp
+.map
+.project
+.settings
+Thumbs.db

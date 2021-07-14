@@ -1,0 +1,25 @@
+{
+  "name": "ti.scroller",
+  "version": "1.0.0",
+  "description": "A simple library to create a marquee-like elements in your Appcelerator Titanium Apps for both Classic and Alloy projects.",
+  "main": "ti.scroller.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/macCesar/ti.scroller.git"
+  },
+  "keywords": [
+    "alloy",
+    "titanium",
+    "library",
+    "javascript",
+    "utility"
+  ],
+  "author": "César Estrada",
+  "bugs": {
+    "url": "https://github.com/macCesar/ti.scroller/issues"
+  },
+  "homepage": "https://github.com/macCesar/ti.scroller#readme"
+}

@@ -1,5 +1,12 @@
+let Scroller = require('ti.scroller')
+
 let win = Ti.UI.createWindow({
-    backgroundColor: "#fff"
+    title: 'ti.scroller',
+    backgroundColor: '#fff'
+});
+
+let navWindow = Ti.UI.createNavigationWindow({
+    window: win
 });
 
 let container = Ti.UI.createView({
@@ -7,17 +14,10 @@ let container = Ti.UI.createView({
     height: Ti.UI.SIZE
 });
 
-let scroller = require('ti.scroller')
-
-let marketStocks = new scroller();
-let famousPeopleQuotes = new scroller();
-let bestQuotesOfAllTimes = new scroller();
-let singleTextMessage = new scroller();
-
-famousPeopleQuotes.init({
-    top: 5,
+let famousPeopleQuotes = new Scroller({
+    top: 8,
     random: true,
-    duration: 2,
+    speed: 2,
     color: '#fff',
     label: 'Famous People:',
     backgroundColor: '#53606b',
@@ -32,9 +32,9 @@ famousPeopleQuotes.init({
     ]
 });
 
-bestQuotesOfAllTimes.init({
-    top: 5,
-    duration: 2,
+let bestQuotesOfAllTimes = new Scroller({
+    top: 8,
+    speed: 2,
     color: '#fff',
     fontWeight: 'bold',
     label: 'Best Quotes:',
@@ -53,22 +53,22 @@ bestQuotesOfAllTimes.init({
     ]
 });
 
-marketStocks.init({
-    top: 5,
+let marketStocks = new Scroller({
+    top: 8,
     height: 36,
-    duration: 1,
+    speed: 2,
     color: '#fff',
     label: 'Market:',
     backgroundColor: '#F3650C',
-    messages: [
-        "EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%"
-    ]
+    messages: "EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%"
 });
 
-singleTextMessage.init({
+let singleTextMessage = new Scroller({
+    top: 0,
     delay: 3,
+    shadow: true,
     backgroundColor: '#c91326',
-    messages: 'Appcelerator Titanium: Everything you need to create great, native mobile apps — All from a single JavaScript code base.'
+    message: 'Appcelerator Titanium: Everything you need to create great, native mobile apps — All from a single JavaScript code base.'
 });
 
 Ti.App.addEventListener('paused', function() {
@@ -85,20 +85,17 @@ Ti.App.addEventListener('resume', function() {
     singleTextMessage.resume();
 });
 
-container.add(singleTextMessage.view());
-container.add(famousPeopleQuotes.view());
-container.add(bestQuotesOfAllTimes.view());
-container.add(marketStocks.view());
+container.add(famousPeopleQuotes.getView());
+container.add(bestQuotesOfAllTimes.getView());
+container.add(marketStocks.getView());
 
 win.add(container);
 
+win.add(singleTextMessage.getView());
+
+navWindow.open();
+
+singleTextMessage.animate();
 famousPeopleQuotes.animate();
 bestQuotesOfAllTimes.animate();
 marketStocks.animate();
-singleTextMessage.animate();
-
-setTimeout(() => {
-    marketStocks.updateBackground('#c91326');
-}, 5000);
-
-win.open();
