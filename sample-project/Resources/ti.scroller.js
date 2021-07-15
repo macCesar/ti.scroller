@@ -1,288 +1,308 @@
-class Scroller {
-	constructor(_args) {
-		if (!_args) return false;
+function Scroller(_args) {
+	let scroller = this;
 
-		// Testing Some Events
-		this.event = {
-			paused: (source) => { },
-			resumed: (source) => { },
-			complete: (source) => { },
-		}
+	if (!_args) return false;
 
-		// Device values
-		this.platformWidth = Ti.Platform.displayCaps.platformWidth;
-		this.logicalDensityFactor = Ti.Platform.displayCaps.logicalDensityFactor;
-		this.deviceWidth = (OS_IOS) ? this.platformWidth : Math.round(this.platformWidth / this.logicalDensityFactor);
-
-		// Aattributes
-		this.name = _args.name ?? '';
-		this.random = _args.random ?? false;
-		this.speed = _args.speed ? _args.speed * 10 : 30;
-		this.delay = _args.delay ? _args.delay * 1000 : 0;
-		this.messages = Array.isArray(_args.messages) ? _args.messages : _args.messages ? [_args.messages] : [];
-		if (_args.message) {
-			this.messages = Array.isArray(_args.message) ? _args.message : [_args.message];
-		}
-
-		// Local settings
-		this.paused = false;
-		this.currentMessage = -1;
-		this.defaultBackgroundColor = '#BF000000';
-		this.backgroundColor = _args.backgroundColor ?? this.defaultBackgroundColor;
-
-		// The main Animation
-		this.animation = Ti.UI.createAnimation({
-			curve: Ti.UI.ANIMATION_CURVE_LINEAR
-		});
-
-		this.animation.addEventListener('complete', () => {
-			this.event.complete(this);
-
-			if (!this.paused) {
-				setTimeout(() => {
-					this.animate();
-				}, this.delay);
-			}
-		});
-
-		// Main View
-		this.scrollerView = Ti.UI.createView({
-			width: Ti.UI.FILL,
-			height: Ti.UI.SIZE
-		});
-
-		if (_args.shadow) {
-			this.scrollerView.applyProperties({
-				viewShadowOffset: { x: 0, y: 2 }, viewShadowRadius: 4, viewShadowColor: this.defaultBackgroundColor
-			});
-		}
-
-		this.scrollerLabel = Ti.UI.createLabel({
-			height: Ti.UI.SIZE,
-			right: this.deviceWidth
-		});
-
-		this.scrollerView.add(this.scrollerLabel);
-
-		// More Properties
-		if (this.random) {
-			this.messages = this.messages.sort(() => Math.random() - 0.5);
-		}
-
-		// Optional sidelabel
-		if (_args.label) {
-			this.addSidelabel(_args);
-		}
-
-		this.applyPropertiesToScroller(_args);
-
-		this.applyPropertiesToScrollerLabel(_args);
-
-		Ti.Gesture.addEventListener('orientationchange', (e) => {
-			if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT || e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
-				if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT) {
-					this.platformWidth = Ti.Platform.displayCaps.platformWidth;
-				} else if (e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
-					this.platformWidth = (OS_IOS) ? Ti.Platform.displayCaps.platformWidth : Ti.Platform.displayCaps.platformHeight;
-				}
-				this.deviceWidth = (OS_IOS) ? this.platformWidth : Math.round(this.platformWidth / this.logicalDensityFactor);
-			}
-		});
+	// Testing Some Events
+	let event = {
+		paused: (source) => { },
+		resumed: (source) => { },
+		complete: (source) => { },
 	}
 
-	// Events
-	on(eventName, callback) {
-		this.event[eventName] = callback;
+	// Device values
+	let platformWidth = Ti.Platform.displayCaps.platformWidth;
+	let logicalDensityFactor = Ti.Platform.displayCaps.logicalDensityFactor;
+	let deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
+
+	// Attributes
+	let name = _args.name ?? '';
+	let random = _args.random ?? false;
+	let speed = _args.speed ? _args.speed * 10 : 30;
+	let delay = _args.delay ? _args.delay * 1000 : 0;
+	let messages = Array.isArray(_args.messages) ? _args.messages : _args.messages ? [_args.messages] : [];
+
+	if (_args.message) {
+		messages = Array.isArray(_args.message) ? _args.message : [_args.message];
 	}
+
+	// Local settings
+	let sideLabel;
+	let paused = false;
+	let currentMessage = -1;
+	let defaultBackgroundColor = '#BF000000';
+	let backgroundColor = _args.backgroundColor ?? defaultBackgroundColor;
+
+	// The main Animation
+	let animation = Ti.UI.createAnimation({
+		curve: Ti.UI.ANIMATION_CURVE_LINEAR
+	});
+
+	animation.addEventListener('complete', () => {
+		event.complete(this);
+
+		if (!paused) {
+			setTimeout(() => {
+				scroller.animate();
+			}, delay);
+		}
+	});
 
 	// Methods
-	getView() {
-		return this.scrollerView;
-	}
-
-	animate() {
-		(this.currentMessage < this.messages.length - 1) ? this.currentMessage++ : this.currentMessage = 0;
-
-		// Just to recalculate the width of the new text
-		let _label = Ti.UI.createLabel({
-			height: Ti.UI.SIZE,
-			text: this.messages[this.currentMessage],
-			font: { fontFamily: this.scrollerLabel.font.fontFamily ?? undefined, fontSize: this.scrollerLabel.font.fontSize ?? '14dp', fontWeight: this.scrollerLabel.font.fontWeight ?? 'normal' }
-		});
-
-		let width = Math.round(1 + _label.toImage().width / this.logicalDensityFactor);
-
-		this.scrollerLabel.applyProperties({
-			width: width,
-			left: this.deviceWidth,
-			text: this.messages[this.currentMessage],
-		});
-
-		this.animation.applyProperties({
-			left: -parseInt(width),
-			duration: width * this.speed,
-		});
-
-		// timeout in order to prevent this Warning:
-		// [WARN]  New layout set while view [object TiUILabel] animating: Will relayout after animation.
-		setTimeout(() => {
-			this.scrollerLabel.animate(this.animation);
-		}, 100);
-	}
-
-	pause() {
-		this.paused = true;
-		this.event.paused(this);
-	}
-
-	resume() {
-		if (this.paused) {
-			this.paused = false;
-			this.animate();
-			this.event.resumed(this);
-		}
-	}
-
-	update(_args) {
+	scroller.update = function(_args) {
 		// Reset Background Color
-		this.backgroundColor = _args.backgroundColor ?? this.scrollerView.backgroundColor;
+		backgroundColor = _args.backgroundColor ?? mainScrollerView.backgroundColor;
 
 		// Update Messages
 		if (_args.messages) {
-			this.updateMessages(_args.messages);
-		}
-		if (_args.message) {
-			this.updateMessages(_args.message);
+			scroller.updateMessages(_args.messages);
+		} else if (_args.message) {
+			scroller.updateMessages(_args.message);
 		}
 
 		// Update Random
 		if (_args.random) {
-			this.random = true;
-			this.messages = this.messages.sort(() => Math.random() - 0.5);
+			random = true;
+			messages = messages.sort(() => Math.random() - 0.5);
 		}
 
 		// Update Delay
 		if (_args.delay >= 0) {
-			this.delay = _args.delay * 1000;
+			delay = _args.delay * 1000;
+		}
+
+		// height
+		_args.height = _args.height ?? mainScrollerView.height;
+
+		// fontSize
+		if (!_args.font) {
+			_args.font = {
+				fontSize: scrollerLabel.font.fontSize,
+				fontFamily: scrollerLabel.font.fontFamily,
+				fontWeight: scrollerLabel.font.fontWeight,
+			}
+		} else {
+			_args.font.fontSize = _args.font.fontSize ?? scrollerLabel.font.fontSize;
+			_args.font.fontFamily = _args.font.fontFamily ?? scrollerLabel.font.fontFamily;
+			_args.font.fontWeight = _args.font.fontWeight ?? scrollerLabel.font.fontWeight;
 		}
 
 		// Update Scroller View Properties
-		this.applyPropertiesToScroller(_args, 250);
+		applyPropertiesToScroller(_args, 250);
 
 		// Update Scroller Label Properties
-		this.applyPropertiesToScrollerLabel(_args);
+		applyPropertiesToScrollerLabel(_args);
 
 		// Update Side Label Properties
-		this.applyPropertiesToSideLabel(_args, 250);
+		applyPropertiesToSideLabel(_args, 250);
 	}
 
-	updateMessages(_messages) {
-		this.currentMessage = -1;
-		this.messages = Array.isArray(_messages) ? _messages : [_messages];
+	scroller.updateMessages = function(_messages) {
+		currentMessage = -1;
+		messages = Array.isArray(_messages) ? _messages : [_messages];
 
-		if (this.random) {
-			this.messages = this.messages.sort(() => Math.random() - 0.5);
+		if (random) {
+			messages = messages.sort(() => Math.random() - 0.5);
 		}
 	}
 
-	updateBackground(_backgroundColor) {
-		this.backgroundColor = _backgroundColor;
+	scroller.updateBackground = function(_backgroundColor) {
+		backgroundColor = _backgroundColor;
 
-		if (this.sideLabel) {
-			this.sideLabel.animate({
+		if (sideLabel) {
+			sideLabel.animate({
 				duration: 250,
-				backgroundColor: this.colorLuminance(this.backgroundColor, -0.20)
+				backgroundColor: colorLuminance(backgroundColor, -0.20)
 			});
 		}
 
-		this.scrollerView.animate({
+		mainScrollerView.animate({
 			duration: 250,
-			backgroundColor: this.backgroundColor
+			backgroundColor: backgroundColor
 		});
 	};
 
-	updateLabel(_label) {
-		if (_label && this.sideLabel) {
-			this.sideLabel.applyProperties({
+	scroller.updateLabel = function(_label) {
+		if (_label && sideLabel) {
+			sideLabel.applyProperties({
 				text: `  ${_label}  `,
 			});
 		}
 	}
 
+	scroller.getView = function() {
+		return mainScrollerView;
+	}
+
+	scroller.animate = function() {
+		(currentMessage < messages.length - 1) ? currentMessage++ : currentMessage = 0;
+
+		// Just to recalculate the width of the new text
+		let _label = Ti.UI.createLabel({
+			height: Ti.UI.SIZE,
+			text: messages[currentMessage],
+			font: { fontFamily: scrollerLabel.font.fontFamily ?? undefined, fontSize: scrollerLabel.font.fontSize ?? '14dp', fontWeight: scrollerLabel.font.fontWeight ?? 'normal' }
+		});
+
+		let width = Math.round(1 + _label.toImage().width / logicalDensityFactor);
+
+		scrollerLabel.applyProperties({
+			width: width,
+			left: deviceWidth,
+			text: messages[currentMessage],
+		});
+
+		animation.applyProperties({
+			left: -parseInt(width),
+			duration: width * speed,
+		});
+
+		// timeout in order to prevent this Warning:
+		// [WARN]  New layout set while view [object TiUILabel] animating: Will relayout after animation.
+		setTimeout(() => {
+			scrollerLabel.animate(animation);
+		}, 100);
+	}
+
+	scroller.pause = function() {
+		paused = true;
+		event.paused(this);
+	}
+
+	scroller.resume = function() {
+		if (paused) {
+			paused = false;
+			scroller.animate();
+			event.resumed(this);
+		}
+	}
+
+	// Main View
+	let mainScrollerView = Ti.UI.createView({
+		width: Ti.UI.FILL,
+		height: Ti.UI.SIZE
+	});
+
+	// Expose Methods for Alloy Projets
+	mainScrollerView.pause = scroller.pause;
+	mainScrollerView.resume = scroller.resume;
+	mainScrollerView.update = scroller.update;
+	mainScrollerView.updateLabel = scroller.updateLabel;
+	mainScrollerView.updateMessages = scroller.updateMessages;
+	mainScrollerView.updateBackground = scroller.updateBackground;
+
+	if (_args.shadow) {
+		mainScrollerView.applyProperties({
+			viewShadowOffset: { x: 0, y: 2 }, viewShadowRadius: 4, viewShadowColor: defaultBackgroundColor
+		});
+	}
+
+	let scrollerLabel = Ti.UI.createLabel({
+		height: Ti.UI.SIZE,
+		right: deviceWidth
+	});
+
+	mainScrollerView.add(scrollerLabel);
+
+	// More Properties
+	if (random) {
+		messages = messages.sort(() => Math.random() - 0.5);
+	}
+
+	// Optional sidelabel
+	if (_args.label) {
+		addSidelabel(_args);
+	}
+
+	applyPropertiesToScroller(_args);
+
+	applyPropertiesToScrollerLabel(_args);
+
+	Ti.Gesture.addEventListener('orientationchange', (e) => {
+		if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT || e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
+			if (e.orientation === Ti.UI.PORTRAIT || e.orientation === Ti.UI.UPSIDE_PORTRAIT) {
+				platformWidth = Ti.Platform.displayCaps.platformWidth;
+			} else if (e.orientation === Ti.UI.LANDSCAPE_LEFT || e.orientation === Ti.UI.LANDSCAPE_RIGHT) {
+				platformWidth = (OS_IOS) ? Ti.Platform.displayCaps.platformWidth : Ti.Platform.displayCaps.platformHeight;
+			}
+			deviceWidth = (OS_IOS) ? platformWidth : Math.round(platformWidth / logicalDensityFactor);
+		}
+	});
+
 	// Helper Functions
-	addSidelabel(_args) {
-		this.sideLabel = Ti.UI.createLabel({
+	function addSidelabel(_args) {
+		sideLabel = Ti.UI.createLabel({
 			left: 0,
 			width: Ti.UI.SIZE,
 			verticalAlign: Ti.UI.TEXT_VERTICAL_ALIGNMENT_CENTER,
-			viewShadowOffset: { x: 4, y: 0 }, viewShadowRadius: 4, viewShadowColor: this.defaultBackgroundColor
+			viewShadowOffset: { x: 4, y: 0 }, viewShadowRadius: 4, viewShadowColor: defaultBackgroundColor
 		});
 
-		this.applyPropertiesToSideLabel(_args);
+		applyPropertiesToSideLabel(_args);
 
-		this.scrollerView.add(this.sideLabel);
+		mainScrollerView.add(sideLabel);
 	}
 
-	applyPropertiesToScroller(_args, duration = 0) {
+	function applyPropertiesToScroller(_args, duration = 0) {
 		if (duration) {
-			this.scrollerView.animate({
+			mainScrollerView.animate({
 				duration: duration,
 				height: _args.height ?? 28,
 				top: _args.top ?? undefined,
 				bottom: _args.bottom ?? undefined,
-				backgroundColor: this.backgroundColor
+				backgroundColor: backgroundColor
 			});
 		} else {
-			this.scrollerView.applyProperties({
+			mainScrollerView.applyProperties({
 				height: _args.height ?? 28,
 				top: _args.top ?? undefined,
 				bottom: _args.bottom ?? undefined,
-				backgroundColor: this.backgroundColor
+				backgroundColor: backgroundColor
 			});
 		}
 	}
 
-	applyPropertiesToScrollerLabel(_args) {
-		this.scrollerLabel.applyProperties({
+	function applyPropertiesToScrollerLabel(_args) {
+		scrollerLabel.applyProperties({
 			height: _args.height ?? 28,
 			color: _args.color ?? '#fff',
 			font: { fontFamily: (_args.font && _args.font.fontFamily) ?? undefined, fontSize: (_args.font && _args.font.fontSize) ?? '14dp', fontWeight: (_args.font && _args.font.fontWeight) ?? 'normal' }
 		});
 	}
 
-	applyPropertiesToSideLabel(_args, duration = 0) {
-		if (this.sideLabel) {
+	function applyPropertiesToSideLabel(_args, duration = 0) {
+		if (sideLabel) {
 			if (duration) {
-				this.applyPropertiesToSideLabelWithAnimation(_args, duration);
+				applyPropertiesToSideLabelWithAnimation(_args, duration);
 			} else {
-				this.sideLabel.applyProperties({
+				sideLabel.applyProperties({
 					height: _args.height ?? 28,
 					color: _args.color ?? '#fff',
-					backgroundColor: this.colorLuminance(this.backgroundColor, -0.20),
-					text: _args.label === '' ? '' : (_args.label === undefined) ? this.sideLabel.text : `  ${_args.label}  `,
+					backgroundColor: colorLuminance(backgroundColor, -0.20),
+					text: _args.label === '' ? '' : (_args.label === undefined) ? sideLabel.text : `  ${_args.label}  `,
 					font: { fontFamily: (_args.font && _args.font.fontFamily) ?? undefined, fontSize: (_args.font && _args.font.fontSize) ?? '14dp', fontWeight: 'bold' },
 				});
 			}
 		} else {
-			this.addSidelabel(_args);
+			addSidelabel(_args);
 		}
 	}
 
-	applyPropertiesToSideLabelWithAnimation(_args, duration = 0) {
-		this.sideLabel.applyProperties({
-			text: _args.label === '' ? '' : (_args.label === undefined) ? this.sideLabel.text : `  ${_args.label}  `,
+	function applyPropertiesToSideLabelWithAnimation(_args, duration = 0) {
+		sideLabel.applyProperties({
+			text: _args.label === '' ? '' : (_args.label === undefined) ? sideLabel.text : `  ${_args.label}  `,
 			font: { fontFamily: (_args.font && _args.font.fontFamily) ?? undefined, fontSize: (_args.font && _args.font.fontSize) ?? '14dp', fontWeight: 'bold' }
 		});
 
-		this.sideLabel.animate({
+		sideLabel.animate({
 			duration: duration,
 			height: _args.height ?? 28,
 			color: _args.color ?? '#fff',
-			backgroundColor: this.colorLuminance(this.backgroundColor, -0.20),
+			backgroundColor: colorLuminance(backgroundColor, -0.20),
 		});
 	}
 
-	colorLuminance(_hex, _lum) {
+	function colorLuminance(_hex, _lum) {
 		// validate _hex string
 		_hex = String(_hex).replace(/[^0-9a-f]/gi, '');
 		if (_hex.length < 6) {
@@ -299,5 +319,21 @@ class Scroller {
 		}
 		return rgb;
 	}
+
+	return scroller;
 }
 module.exports = Scroller;
+
+module.exports.createView = (args) => {
+	if (args.message) {
+		args.message = args.message.split('|');
+	} else if (args.messages) {
+		args.messages = args.messages.split('|');
+	}
+
+	let alloyScrollerView = new Scroller(args);
+
+	alloyScrollerView.animate();
+
+	return alloyScrollerView.getView();
+};

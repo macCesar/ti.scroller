@@ -141,7 +141,65 @@ bestQuotesOfAllTimes.animate();
 
 ***\* low framerate gif***
 
-## Properties
+## Alloy Projects
+For Alloy projects drop `ti.scroller` in `/app/lib/ti.scroller.js`.
+
+```bash
+app
+└─ lib
+   └─ ti.scroller.js
+```
+
+In your `xml` file, create a `View` element set the `module="ti.scroller"` attribute.
+
+You can set any of the supported attributes directly to the `View`.
+
+**IMPORTANT: For multiple `messages` you'll need to separate them with the `|` symbol like shown below.**
+
+```xml
+<Alloy>
+    <NavigationWindow id="navWindow">
+        <Window id="mainWindow" title="ti.scroller" class="container">
+            <View id="mainScroller" module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="2" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
+        </Window>
+    </NavigationWindow>
+</Alloy>
+```
+
+## Result
+<img src="assets/images/alloy-example.gif" width="375" alt="iOS Screen - Example">
+
+***\* low framerate gif***
+
+In your `controller` you can call any of the available methods: `update`, `udpateLabel`, `updateMessages`, `updateBackground`, `pause` or `resume` at anytime.
+
+```javascript
+$.mainScroller.update({
+    delay: 3,
+    top: 48,
+    label: 'Appcelerator:',
+    message: 'Build great mobile experiences faster - Native apps. Mobile APIs. Real-time analytics. One Platform'
+});
+```
+
+## Recomendation
+It is recommended to add `paused` and `resume` events to your app in order to `pause` or `resume` the scrolling effect while the app is in the background.
+
+```javascript
+Ti.App.addEventListener('paused', function() {
+    scrollingText.pause();
+    // For Alloy Projects
+    $.scrollingText.pause();
+});
+
+Ti.App.addEventListener('resume', function() {
+    scrollingText.resume();
+    // For Alloy Projects
+    $.scrollingText.resume();
+});
+```
+
+## Properties glossary
 
 ### message/messages : `array`
 The text to display can be set with `message` or `messages` using an array ( for a single message you can set it using a string ).

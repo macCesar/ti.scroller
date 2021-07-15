@@ -72,10 +72,10 @@ let singleTextMessage = new Scroller({
 });
 
 Ti.App.addEventListener('paused', function() {
-    famousPeopleQuotes.stop();
-    bestQuotesOfAllTimes.stop();
-    marketStocks.stop();
-    singleTextMessage.stop();
+    famousPeopleQuotes.pause();
+    bestQuotesOfAllTimes.pause();
+    marketStocks.pause();
+    singleTextMessage.pause();
 });
 
 Ti.App.addEventListener('resume', function() {
