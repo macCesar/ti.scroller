@@ -150,17 +150,17 @@ app
    └─ ti.scroller.js
 ```
 
-In your `xml` file, create a `View` element set the `module="ti.scroller"` attribute.
+In your `xml` file, create a `View` element set the `module` attribute to `module="ti.scroller"`.
 
-You can set any of the supported attributes directly to the `View`.
+You can set any of the supported attributes directly in the `View`.
 
 **IMPORTANT: For multiple `messages` you'll need to separate them with the `|` symbol like shown below.**
 
 ```xml
 <Alloy>
-    <NavigationWindow id="navWindow">
-        <Window id="mainWindow" title="ti.scroller" class="container">
-            <View id="mainScroller" module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="2" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
+    <NavigationWindow>
+        <Window title="ti.scroller">
+            <View module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="2" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
         </Window>
     </NavigationWindow>
 </Alloy>
@@ -183,7 +183,7 @@ $.mainScroller.update({
 ```
 
 ## Recomendation
-It is recommended to add `paused` and `resume` events to your app in order to `pause` or `resume` the scrolling effect while the app is in the background.
+It is recommended to add the `paused` event in order to pause the scrolling effect while the app is in the background and the `resume` event to resume scrolling when in the foreground.
 
 ```javascript
 Ti.App.addEventListener('paused', function() {
@@ -202,7 +202,7 @@ Ti.App.addEventListener('resume', function() {
 ## Properties glossary
 
 ### message/messages : `array`
-The text to display can be set with `message` or `messages` using an array ( for a single message you can set it using a string ).
+The text to display can be set with `message` or `messages` property using an array ( for a single message you can set it using a string ).
 
 ```javascript
 let messageScroller = new Scroller({
@@ -304,7 +304,7 @@ You can use `px`, `%` or `dp` values.
 ```javascript
 let messageScroller = new Scroller({
     top: 44,
-    OR
+    // OR
     bottom: 0
     ...
 });
@@ -325,7 +325,7 @@ let messageScroller = new Scroller({
 ```
 
 ### speed : `number`
-The speed of the scrolling text, where lower number is faster and higher number is slower.
+The speed of the scrolling text, where a lower number is faster and a higher number is slower.
 
 **Defaults to: `3`**
 
@@ -408,7 +408,7 @@ messageScroller.updateMessages( [
 ```
 
 ### updateBackground
-Use it to change the scroller's background color, including the `lable` property if available.
+Use it to change the scroller's background color, including the `label` property if available.
 
 ```javascript
 messageScroller.updateBackground('#79a342');
@@ -416,7 +416,7 @@ messageScroller.updateBackground('#79a342');
 
 ## License
 <pre>
-Copyright 2020-2021
+Copyright 2020-2021 César Estrada
 
 Licensed under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License.
 
