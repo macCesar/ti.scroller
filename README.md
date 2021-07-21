@@ -362,6 +362,7 @@ Is a general purpose method to change any or all of the following properties:
 - color
 - label
 - delay
+- speed
 - height
 - random
 - top/bottom
@@ -375,6 +376,7 @@ When updating the message ( or messages ), the text will be shown after completi
 messageScroller.update({
     top: 0,
     delay: 0,
+    speed: 10,
     label: 'Appcelerator:',
     message: 'Build great mobile experiences faster - Native apps. Mobile APIs. Real-time analytics. One Platform',
     font: {

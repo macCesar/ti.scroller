@@ -26,6 +26,12 @@ function Scroller(_args) {
 		messages = Array.isArray(_args.message) ? _args.message : [_args.message];
 	}
 
+	if (messages.length === 0) {
+		let defaultMessage = ':: ti.scroller :: You need to set at least one text message when creating the scroller!';
+		messages = [defaultMessage];
+		Ti.API.error(defaultMessage);
+	}
+
 	// Local settings
 	let sideLabel;
 	let paused = false;
@@ -69,6 +75,11 @@ function Scroller(_args) {
 		// Update Delay
 		if (_args.delay >= 0) {
 			delay = _args.delay * 1000;
+		}
+
+		// Update Speed
+		if (_args.speed >= 0) {
+			speed = _args.speed * 10;
 		}
 
 		// height
@@ -329,6 +340,9 @@ module.exports.createView = (args) => {
 		args.message = args.message.split('|');
 	} else if (args.messages) {
 		args.messages = args.messages.split('|');
+	} else {
+		args.message = ':: ti.scroller :: You need to set at least one text message when creating the scroller!';
+		Ti.API.error(args.message);
 	}
 
 	let alloyScrollerView = new Scroller(args);
