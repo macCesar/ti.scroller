@@ -17,7 +17,7 @@ let container = Ti.UI.createView({
 let famousPeopleQuotes = new Scroller({
     top: 8,
     random: true,
-    speed: 2,
+    speed: 7,
     color: '#fff',
     label: 'Famous People:',
     backgroundColor: '#53606b',
@@ -34,7 +34,7 @@ let famousPeopleQuotes = new Scroller({
 
 let bestQuotesOfAllTimes = new Scroller({
     top: 8,
-    speed: 2,
+    speed: 6,
     color: '#fff',
     fontWeight: 'bold',
     label: 'Best Quotes:',
@@ -56,7 +56,7 @@ let bestQuotesOfAllTimes = new Scroller({
 let marketStocks = new Scroller({
     top: 8,
     height: 36,
-    speed: 2,
+    speed: 8,
     color: '#fff',
     label: 'Market:',
     backgroundColor: '#F3650C',

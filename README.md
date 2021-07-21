@@ -67,7 +67,7 @@ let container = Ti.UI.createView({
 
 let famousPeopleQuotes = new Scroller({
     top: 8,
-    speed: 2,
+    speed: 7,
     random: true,
     color: '#dddfe1',
     label: 'Famous People:',
@@ -85,7 +85,7 @@ let famousPeopleQuotes = new Scroller({
 
 let bestQuotesOfAllTimes = new Scroller({
     top: 8,
-    speed: 2,
+    speed: 6,
     label: 'Best Quotes:',
     backgroundColor: '#79a342',
     messages: [
@@ -104,7 +104,7 @@ let bestQuotesOfAllTimes = new Scroller({
 
 let marketStocks = new Scroller({
     top: 8,
-    speed: 2,
+    speed: 8,
     height: 36,
     label: 'Market:',
     backgroundColor: '#F3650C',
@@ -160,7 +160,7 @@ You can set any of the supported attributes directly in the `View`.
 <Alloy>
     <NavigationWindow>
         <Window title="ti.scroller">
-            <View module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="2" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
+            <View module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="4" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
         </Window>
     </NavigationWindow>
 </Alloy>
@@ -325,13 +325,13 @@ let messageScroller = new Scroller({
 ```
 
 ### speed : `number`
-The speed of the scrolling text, where a lower number is faster and a higher number is slower.
+The speed of the scrolling text, a constant speed no matter the text length, the higher the number the faster the scrolling speed.
 
-**Defaults to: `3`**
+**Defaults to: `5`**
 
 ```javascript
 let messageScroller = new Scroller({
-    speed: 2,
+    speed: 7,
     ...
 });
 ```

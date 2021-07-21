@@ -18,7 +18,7 @@ function Scroller(_args) {
 	// Attributes
 	let name = _args.name ?? '';
 	let random = _args.random ?? false;
-	let speed = _args.speed ? _args.speed * 10 : 30;
+	let speed = _args.speed ? _args.speed * 10 : 50;
 	let delay = _args.delay ? _args.delay * 1000 : 0;
 	let messages = Array.isArray(_args.messages) ? _args.messages : _args.messages ? [_args.messages] : [];
 
@@ -154,7 +154,7 @@ function Scroller(_args) {
 
 		animation.applyProperties({
 			left: -parseInt(width),
-			duration: width * speed,
+			duration: 1000 * ((width + deviceWidth) / speed),
 		});
 
 		// timeout in order to prevent this Warning:
