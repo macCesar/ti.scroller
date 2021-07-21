@@ -183,7 +183,7 @@ $.mainScroller.update({
 ```
 
 ## Recomendation
-It is recommended to add the `paused` event in order to pause the scrolling effect while the app is in the background and the `resume` event to resume scrolling when in the foreground.
+To prevent unexpected behaviors, it is recommended to add the `paused` event in order to pause the scrolling effect while the app is in the background and the `resume` event to resume scrolling when in the foreground.
 
 ```javascript
 Ti.App.addEventListener('paused', function() {
