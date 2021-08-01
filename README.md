@@ -191,12 +191,12 @@ They will handle every scrolling view created in your app.
 
 ```javascript
 Ti.App.addEventListener('paused', function() {
-	// Automatically `pauses` every scrolling view created
+    // Automatically `pauses` every scrolling view created
     // when your app goes to the background
 });
 
 Ti.App.addEventListener('resume', function() {
-	// Automatically `resumes` every scrolling view created
+    // Automatically `resumes` every scrolling view created
     // when your app comes to the foreground
 });
 ```
