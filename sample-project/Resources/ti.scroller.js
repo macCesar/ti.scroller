@@ -184,7 +184,6 @@ function ScrollingView(_args) {
 
 	_scrollingView.animate = function() {
 		logger('`animate()` method is DEPRECATED: Will be deleted in v.2.0.0', true);
-		_scrollingView.play();
 	}
 
 	_scrollingView.pause = function() {

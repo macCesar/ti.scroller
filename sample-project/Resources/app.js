@@ -69,5 +69,5 @@ container.add(bestQuotesOfAllTimes.getView());
 container.add(marketStocks.getView());
 
 win.add(container);
-
+bestQuotesOfAllTimes.animate();
 win.open();
