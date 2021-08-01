@@ -202,7 +202,7 @@ Ti.App.addEventListener('resume', function() {
 ```
 
 ## Customization
-You can customize the text color, background color, vertical position, font size, font weight, font family, scrolling speed, delay between messages, autoplay messages, random order display, side label text and debug mode with the following `properties`:
+You can customize the text color, background color, vertical position, font size, font weight, font family, scrolling speed, delay between messages, autoplay messages, random order display, side label text, name and debug mode with the following `properties`:
 
 - `name`
 - `color`
