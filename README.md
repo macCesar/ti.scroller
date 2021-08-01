@@ -12,13 +12,13 @@ A simple library to create a marquee-like elements in your Appcelerator Titanium
 ### Autoplaying scrolling views
 Each scrolling view will start playing immediately after initialization if either `message` or `messages` properties are set.
 
-### This means that you no longer need to call the `animate()` method ( now deprecated ) after initialization.*
+### This means that you no longer need to call the `animate()` method ( now deprecated ) after initialization.
 
 They won't `autoplay` if there is no message set at initialization, this is useful when you need to get the data from the internet. They will start playing the moment you set a new message(s) with `update()` or `updateMessage/Messages()` methods.
 
 If you set the `message(s)` property and still don't want the scrolling views to start playing immediately, set the new `autoplay` property to `false`.
 
-Then use the `resume()` method or the new `play()` method to start playing the scrolling view when needed. *Just remember to set the `autoplay` property back to `true`.
+Then use the `resume()` method or the new `play()` method to start playing the scrolling view when needed. *Just remember to set the `autoplay` property back to `true`*.
 
 ### New `<ScrollingView />` Alloy element
 In order to be more like a native Ti element in Alloy projects, you now create your scrolling views with the `<ScrollingView>` element provided by `ti.scroller.js`
