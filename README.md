@@ -3,61 +3,69 @@
 ## Description
 A simple library to create a marquee-like elements in your Appcelerator Titanium Apps for both Classic and Alloy projects.
 
-- You can create multiple scrollers and customize them separately
-- Each scroller can display one or multiple messages, cicle between them or display them in random order
+- You can create multiple scrolling views and customize them separately
+- Each scrolling view can display one or multiple messages, cicle between them or display them in random order
 - You can update its content at any time ( messages, color, position, delay, etc. )
 - Works with Android & iOS
 
-## Customization
-You can customize the text color, background color, vertical position, font size, font weight, font family, scrolling speed, delay between messages, random order, and side label with the following `properties`:
+## Breaking changes in v1.1.0
+### Autoplaying scrolling views
+Each scrolling view will start playing immediately after initialization if either `message` or `messages` properties are set.
 
-- `color`
-- `label`
-- `delay`
-- `speed`
-- `height`
-- `random`
-- `top`/`bottom`
-- `backgroundColor`
-- `message`/`messages`
-- `font` object with `fontSize`, `fontWeight`, `fontFamily`
+### This means that you no longer need to call the `animate()` method ( now deprecated ) after initialization.*
+
+They won't `autoplay` if there is no message set at initialization, this is useful when you need to get the data from the internet. They will start playing the moment you set a new message(s) with `update()` or `updateMessage/Messages()` methods.
+
+If you set the `message(s)` property and still don't want the scrolling views to start playing immediately, set the new `autoplay` property to `false`.
+
+Then use the `resume()` method or the new `play()` method to start playing the scrolling view when needed. *Just remember to set the `autoplay` property back to `true`*.
+
+### New `<ScrollingView />` Alloy element
+In order to be more like a native Ti element in Alloy projects, you now create your scrolling views with the `<ScrollingView>` element provided by `ti.scroller.js`
+
+```xml
+<ScrollingView module='ti.scroller' ... />
+```
+
+### `pause` and `resume` Events
+This App Events have been added to the library, so you no longer need to add them manually. They will `pause/resume` every scrolling view created in your app.
+
+### `animate()` method Deprecated
+The `animate()` method is deprecated and will be deleted in the future.
+
+## Installation in Classic Apps
+For Classic Apps, put `ti.scroller.js` file inside the `Resources` folder.
 
 ## Basic usage
 ```javascript
-let Scroller = require('ti.scroller')
+let ScrollingView = require('ti.scroller')
 
 let win = Ti.UI.createWindow({
-    title: 'ti.scroller',
+    title: 'ti.scroller lib',
     backgroundColor: '#fff'
 });
 
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     message: 'Appcelerator Titanium: Everything you need to create great, native mobile apps — All from a single JavaScript code base.'
 });
 
-win.add(messageScroller.getView());
+win.add(scrollingMessage.getView());
 
 win.open();
-
-messageScroller.animate();
 ```
 
 ## Result
-<img src="assets/images/messageScroller.gif" width="375" alt="iOS Screen - Example">
+<img src="assets/images/scrollingMessage.gif" width="375" alt="iOS Screen - Example">
 
 ***\* low framerate gif***
 
 ## Advanzed usage
 ```javascript
-let Scroller = require('ti.scroller')
+let ScrollingView = require('ti.scroller')
 
 let win = Ti.UI.createWindow({
     title: 'ti.scroller',
     backgroundColor: '#fff'
-});
-
-let navWindow = Ti.UI.createNavigationWindow({
-    window: win
 });
 
 let container = Ti.UI.createView({
@@ -65,7 +73,7 @@ let container = Ti.UI.createView({
     height: Ti.UI.SIZE
 });
 
-let famousPeopleQuotes = new Scroller({
+let famousPeopleQuotes = new ScrollingView({
     top: 8,
     speed: 7,
     random: true,
@@ -83,7 +91,7 @@ let famousPeopleQuotes = new Scroller({
     ]
 });
 
-let bestQuotesOfAllTimes = new Scroller({
+let bestQuotesOfAllTimes = new ScrollingView({
     top: 8,
     speed: 6,
     label: 'Best Quotes:',
@@ -102,38 +110,30 @@ let bestQuotesOfAllTimes = new Scroller({
     ]
 });
 
-let marketStocks = new Scroller({
+let marketStocks = new ScrollingView({
     top: 8,
     speed: 8,
     height: 36,
+    debug: true,
     label: 'Market:',
-    backgroundColor: '#F3650C',
-    messages: "EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%"
+    name: 'Market Stocks',
+    message: 'Loading data...',
+    backgroundColor: '#F3650C'
 });
+
+// Simulated API response
+setTimeout(() => {
+    // Just set the new message(s) with `updateMessages` method
+    marketStocks.updateMessages("EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%");
+}, 3000);
 
 container.add(famousPeopleQuotes.getView());
 container.add(bestQuotesOfAllTimes.getView());
 container.add(marketStocks.getView());
 
-Ti.App.addEventListener('paused', function() {
-    marketStocks.pause();
-    famousPeopleQuotes.pause();
-    bestQuotesOfAllTimes.pause();
-});
-
-Ti.App.addEventListener('resume', function() {
-    marketStocks.resume();
-    famousPeopleQuotes.resume();
-    bestQuotesOfAllTimes.resume();
-});
-
 win.add(container);
 
-navWindow.open();
-
-marketStocks.animate();
-famousPeopleQuotes.animate();
-bestQuotesOfAllTimes.animate();
+win.open();
 ```
 
 ## Result
@@ -141,8 +141,8 @@ bestQuotesOfAllTimes.animate();
 
 ***\* low framerate gif***
 
-## Alloy Projects
-For Alloy projects drop `ti.scroller` in `/app/lib/ti.scroller.js`.
+## Installation in Alloy Apps
+For Alloy projects drop `ti.scroller` in `/app/lib` folder.
 
 ```bash
 app
@@ -150,9 +150,9 @@ app
    └─ ti.scroller.js
 ```
 
-In your `xml` file, create a `View` element set the `module` attribute to `module="ti.scroller"`.
+In your `View` file, create a `ScrollingView` Alloy element and add a module attribute like this `module="ti.scroller"`.
 
-You can set any of the supported attributes directly in the `View`.
+You can set any of the supported attributes directly in the `ScrollingView`.
 
 **IMPORTANT: For multiple `messages` you'll need to separate them with the `|` symbol like shown below.**
 
@@ -160,7 +160,7 @@ You can set any of the supported attributes directly in the `View`.
 <Alloy>
     <NavigationWindow>
         <Window title="ti.scroller">
-            <View module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="4" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
+            <ScrollingView id="scrollingMessage" module='ti.scroller' backgroundColor="#c91326" label="Famous Quotes:" speed="4" delay="2" height="32" random="true" top="0" font.fontFamily="Gill Sans" font.fontWeight="semibold" font.fontSize="16" message="Whoever is happy will make others happy too. - Anne Frank|It is during our darkest moments that we must focus to see the light. - Aristotle|Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead" />
         </Window>
     </NavigationWindow>
 </Alloy>
@@ -171,41 +171,61 @@ You can set any of the supported attributes directly in the `View`.
 
 ***\* low framerate gif***
 
-In your `controller` you can call any of the available methods: `update`, `udpateLabel`, `updateMessages`, `updateBackground`, `pause` or `resume` at anytime.
+In your `controller` you can call any of the available methods: `update`, `udpateLabel`, `updateMessage/updateMessages`, `updateBackground`, `pause` or `resume` at anytime.
 
 ```javascript
-$.mainScroller.update({
-    delay: 3,
+$.scrollingMessage.update({
     top: 48,
+    delay: 3,
     label: 'Appcelerator:',
     message: 'Build great mobile experiences faster - Native apps. Mobile APIs. Real-time analytics. One Platform'
 });
 ```
 
-## Important recomendation
-To prevent unexpected behaviors, it is recommended to add the `paused` event in order to pause the scrolling effect while the app is in the background and the `resume` event to resume scrolling when in the foreground.
+## Important consideration
+To prevent unexpected behaviors, the following events have been added to the library:
+- `paused` event: In order to pause the scrolling effect while the app is in the background
+- `resume` event: To resume scrolling when in the foreground.
+
+They will handle every scrolling view created in your app.
 
 ```javascript
 Ti.App.addEventListener('paused', function() {
-    scrollingText.pause();
-    // For Alloy Projects
-    $.scrollingText.pause();
+	// Automatically `pauses` every scrolling view created
+    // when your app goes to the background
 });
 
 Ti.App.addEventListener('resume', function() {
-    scrollingText.resume();
-    // For Alloy Projects
-    $.scrollingText.resume();
+	// Automatically `resumes` every scrolling view created
+    // when your app comes to the foreground
 });
 ```
 
-## Properties glossary
+## Customization
+You can customize the text color, background color, vertical position, font size, font weight, font family, scrolling speed, delay between messages, autoplay messages, random order display, side label text and debug mode with the following `properties`:
+
+- `name`
+- `color`
+- `label`
+- `delay`
+- `speed`
+- `debug`
+- `height`
+- `random`
+- `autoplay`
+- `top`/`bottom`
+- `backgroundColor`
+- `message`/`messages`
+- `font` object with `fontSize`, `fontWeight`, `fontFamily`
+
+
+## Content Properties
 
 ### message/messages : `array`
 The text to display can be set with `message` or `messages` property using an array ( for a single message you can set it using a string ).
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     messages: [
         'Every moment is a fresh beginning. – T.S Eliot',
         'Change the world by being yourself. – Amy Poehler',
@@ -221,11 +241,13 @@ To display a left-side label set the `label` property.
 **Defaults to: `null`**
 
 ```javascript
-let messageScroller = new Scroller({
-    label: 'Braking News:',
+let scrollingMessage = new ScrollingView({
+    label: 'Breaking News:',
     ...
 });
 ```
+
+## Design Properties
 
 ### color : `string`
 Color for the text message(s) and side label in `hex` value.
@@ -233,31 +255,31 @@ Color for the text message(s) and side label in `hex` value.
 **Defaults to: `#fff`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     color: '#79a342',
     ...
 });
 ```
 
 ### backgroundColor : `string`
-Background color for the scroller, as a hex triplet.
+Background color for the scrolling view, as a hex triplet.
 
 **Defaults to: `#BF000000`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     backgroundColor: '#53606b',
     ...
 });
 ```
 
 ### height : `number/string`
-Scroller height, in platform-specific units.
+ScrollingView height, in platform-specific units.
 
 **Defaults to: `28dp`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     height: 44
     ...
 });
@@ -284,7 +306,7 @@ The "semibold", "thin", "light" and "ultralight" weights are recognized on iOS o
 **Defaults: `normal`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     font: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -294,15 +316,17 @@ let messageScroller = new Scroller({
 });
 ```
 
-### top/bottom : `number/string`
-The scroller's top OR bottom position. This position is relative to the scroller's parent.
+## Positioning Properties
+
+### top or bottom : `number/string`
+The scrolling view's top OR bottom position. This position is relative to the scrolling view's parent.
 
 You can use `px`, `%` or `dp` values.
 
 **Defaults to: `undefined`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     top: 44,
     // OR
     bottom: 0
@@ -312,13 +336,25 @@ let messageScroller = new Scroller({
 
 ## Behavior properties
 
+### autoplay : `boolean`
+You can turn off automatic playing by setting the `autoplay` property to false.
+
+**Defaults to: `true`**
+
+```javascript
+let scrollingMessage = new ScrollingView({
+    autoplay: false,
+    ...
+});
+```
+
 ### delay : `number`
 Pause the animation between messages in seconds.
 
 **Defaults to: `0`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     delay: 3,
     ...
 });
@@ -330,7 +366,7 @@ The speed of the scrolling text, a constant speed no matter the text length, the
 **Defaults to: `5`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     speed: 7,
     ...
 });
@@ -342,7 +378,7 @@ To display the messages in random order set `random` to `true`.
 **Defaults to: `false`**
 
 ```javascript
-let messageScroller = new Scroller({
+let scrollingMessage = new ScrollingView({
     random: true,
     ...
 });
@@ -351,29 +387,32 @@ let messageScroller = new Scroller({
 ## Update Methods
 There are 4 `methods` to update the content and properties at any time.
 
-- `update`
-- `updateLabel`
-- `updateMessages`
-- `updateBackground`
+- `update()`
+- `updateLabel()`
+- `updateBackground()`
+- `updateMessage()` or `updateMessages()`
 
 ### update
-Is a general purpose method to change any or all of the following properties:
+Is a **general purpose** method to change any or all of the following properties:
 
+- name
 - color
 - label
 - delay
 - speed
+- debug
 - height
 - random
-- top/bottom
+- autoplay
+- top or bottom
 - backgroundColor
-- message/messages
+- message or messages
 - fontFamily, FontSize, fontWeight
 
 When updating the message ( or messages ), the text will be shown after completing the currently running message.
 
 ```javascript
-messageScroller.update({
+scrollingMessage.update({
     top: 0,
     delay: 0,
     speed: 10,
@@ -385,35 +424,100 @@ messageScroller.update({
 });
 ```
 
-### updateLabel
-This method will instantly update the `label` property.
+### updateMessage/updateMessages
+If you need to update only the message or messages, you can use the `updateMessage` or `updateMessages` methods.
 
-If the scroller does not originally contained a `label`, it will add it automatically.
-
-```javascript
-messageScroller.updateLabel('Braking News:');
-```
-
-### updateMessages
-If you only need to update the message or messages, you can use the `updateMessages` method.
+You can use either of them with a `string` or an `array`.
 
 The updated text will be shown after completing the currently running message.
 
 ```javascript
-messageScroller.updateMessages('Build great mobile experiences faster - Native apps. Mobile APIs. Real-time analytics. One Platform');
+scrollingMessage.updateMessage('Build great mobile experiences faster - Native apps. Mobile APIs. Real-time analytics. One Platform');
 
-messageScroller.updateMessages( [
+scrollingMessage.updateMessages( [
     'Build: Write in JavaScript, run native on any device and OS',
     'Connect: Get mobile-optimized access to any data source',
     'Measure: See usage & adoption, detect crashes, tune performance'
 ]);
 ```
 
-### updateBackground
-Use it to change the scroller's background color, including the `label` property if available.
+### updateLabel
+This method will instantly update the `label` property.
+
+If the scrolling view does not originally contained a `label`, it will be add it automatically.
 
 ```javascript
-messageScroller.updateBackground('#79a342');
+scrollingMessage.updateLabel('Breaking News:');
+```
+
+### updateBackground
+Use it to change the scrolling view's background color, including the `label` property if available.
+
+```javascript
+scrollingMessage.updateBackground('#79a342');
+```
+
+## Debug Mode
+### name : `string`
+In order to identify each Scrolling View while debuging, you can set the `name` property at initialization.
+
+```javascript
+let scrollingMessage = new ScrollingView({
+    name: 'My Scrolling View',
+    ...
+});
+```
+
+```xml
+<ScrollingView id="scrollingMessage" module='ti.scroller' name="My Scrolling View" />
+```
+
+When you enable `debug` mode you'll see multiple outputs with the name of the Scrolling View.
+
+```console
+[WARN]  :: ti.scroller :: My Scrolling View: Add side label
+[WARN]  :: ti.scroller :: My Scrolling View: Apply properties to side label
+[WARN]  :: ti.scroller :: My Scrolling View: Apply properties to scrolling view’s label
+[WARN]  :: ti.scroller :: My Scrolling View: Apply properties to scrolling view
+[WARN]  :: ti.scroller :: My Scrolling View: Play method
+[WARN]  :: ti.scroller :: My Scrolling View: Update messages method
+[WARN]  :: ti.scroller :: My Scrolling View: Complete event
+[WARN]  :: ti.scroller :: My Scrolling View: Play method
+```
+
+*If no `name` is set, the output will be its `id`, and if none is set, it will generate an internal one.*
+
+### debug : `bollean`
+You can debug the scrolling view by setting the `debug` property to `true` at initialization or with the `update()` method.
+
+**Defaults to: `false`**
+
+```javascript
+let scrollingMessage = new ScrollingView({
+    debug: true,
+    ...
+});
+
+// OR
+scrollingMessage.update({
+    debug: true
+});
+```
+
+```xml
+<ScrollingView id="scrollingMessage" module='ti.scroller' debug="true" />
+```
+
+To turn it off
+```javascript
+scrollingMessage.update({
+    debug: false
+});
+
+// OR
+$.scrollingMessage.update({
+    debug: false
+});
 ```
 
 ## License

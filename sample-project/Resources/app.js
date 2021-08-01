@@ -1,12 +1,8 @@
-let Scroller = require('ti.scroller')
+let ScrollingView = require('ti.scroller')
 
 let win = Ti.UI.createWindow({
     title: 'ti.scroller',
     backgroundColor: '#fff'
-});
-
-let navWindow = Ti.UI.createNavigationWindow({
-    window: win
 });
 
 let container = Ti.UI.createView({
@@ -14,11 +10,11 @@ let container = Ti.UI.createView({
     height: Ti.UI.SIZE
 });
 
-let famousPeopleQuotes = new Scroller({
+let famousPeopleQuotes = new ScrollingView({
     top: 8,
-    random: true,
     speed: 7,
-    color: '#fff',
+    random: true,
+    color: '#dddfe1',
     label: 'Famous People:',
     backgroundColor: '#53606b',
     messages: [
@@ -32,11 +28,9 @@ let famousPeopleQuotes = new Scroller({
     ]
 });
 
-let bestQuotesOfAllTimes = new Scroller({
+let bestQuotesOfAllTimes = new ScrollingView({
     top: 8,
     speed: 6,
-    color: '#fff',
-    fontWeight: 'bold',
     label: 'Best Quotes:',
     backgroundColor: '#79a342',
     messages: [
@@ -53,37 +47,22 @@ let bestQuotesOfAllTimes = new Scroller({
     ]
 });
 
-let marketStocks = new Scroller({
+let marketStocks = new ScrollingView({
     top: 8,
-    height: 36,
     speed: 8,
-    color: '#fff',
+    height: 36,
+    debug: true,
     label: 'Market:',
-    backgroundColor: '#F3650C',
-    messages: "EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%"
+    name: 'Market Stocks',
+    message: 'Loading data...',
+    backgroundColor: '#F3650C'
 });
 
-let singleTextMessage = new Scroller({
-    top: 0,
-    delay: 3,
-    shadow: true,
-    backgroundColor: '#c91326',
-    message: 'Appcelerator Titanium: Everything you need to create great, native mobile apps — All from a single JavaScript code base.'
-});
-
-Ti.App.addEventListener('paused', function() {
-    famousPeopleQuotes.pause();
-    bestQuotesOfAllTimes.pause();
-    marketStocks.pause();
-    singleTextMessage.pause();
-});
-
-Ti.App.addEventListener('resume', function() {
-    famousPeopleQuotes.resume();
-    bestQuotesOfAllTimes.resume();
-    marketStocks.resume();
-    singleTextMessage.resume();
-});
+// Simulated API response
+setTimeout(() => {
+    // Just set the new message(s) with `updateMessages` method
+    marketStocks.updateMessages("EUR/USD 1.18664 0 0% · USD/JPY 110.399 0.06 0.05% · GBP/USD 1.38902 0 0% · EUR/JPY 130.9959 0.109 0.08% · GBP/JPY 153.3323 0.116 0.08% · USD/CAD 1.24481 -0.001 -0.08% · XAU/USD 1806.7484 -0.684 -0.04% · AUD/USD 0.74878 0.001 0.13% · USD/CHF 0.91462 -0.001 -0.11% · NZD/USD 0.69921 0.001 0.14%");
+}, 3000);
 
 container.add(famousPeopleQuotes.getView());
 container.add(bestQuotesOfAllTimes.getView());
@@ -91,11 +70,4 @@ container.add(marketStocks.getView());
 
 win.add(container);
 
-win.add(singleTextMessage.getView());
-
-navWindow.open();
-
-singleTextMessage.animate();
-famousPeopleQuotes.animate();
-bestQuotesOfAllTimes.animate();
-marketStocks.animate();
+win.open();
