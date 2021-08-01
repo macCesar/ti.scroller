@@ -18,7 +18,7 @@ They won't `autoplay` if there is no message set at initialization, this is usef
 
 If you set the `message(s)` property and still don't want the scrolling views to start playing immediately, set the new `autoplay` property to `false`.
 
-Then use the `resume()` method or the new `play()` method to start playing the scrolling view when needed. *Just remember to set the `autoplay` property back to `true`*.
+Then use the `resume()` method or the new `play()` method to start playing the scrolling view when needed. *Just remember to set the `autoplay` property back to `true`.
 
 ### New `<ScrollingView />` Alloy element
 In order to be more like a native Ti element in Alloy projects, you now create your scrolling views with the `<ScrollingView>` element provided by `ti.scroller.js`
